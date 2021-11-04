@@ -95,7 +95,7 @@ class Chao:
 
     def Atualizar(self,tela,passaro):
         self.rect = pygame.Rect(self.x,self.y,self.largura,self.altura)
-        #self.Colidir(passaro)
+        self.Colidir(passaro)
         self.Desenhar(tela)
 
     def Colidir(self,passaro):
@@ -140,7 +140,7 @@ class Cano:
         
         self.Desenhar(tela)
         self.Mover()
-        #self.Colidir(passaro)
+        self.Colidir(passaro)
 
     def Colidir(self,passaro):
         global loop, pontuacao
