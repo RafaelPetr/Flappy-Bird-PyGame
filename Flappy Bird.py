@@ -24,6 +24,8 @@ som_iniciar.play()
 loop = True
 pontuacao = 0
 
+fps = 30
+
 #Criando classe de pássaro
 class Passaro:
     x = 170
@@ -37,16 +39,38 @@ class Passaro:
 
     som_voar = pygame.mixer.Sound('./Sons/voar.wav')
 
-    imagem = pygame.image.load("./Jogadores/bird1.png")
-    imagem = pygame.transform.scale(imagem, (largura, altura))
+    imagens = [pygame.image.load("./Jogadores/bird1.png"),
+               pygame.image.load("./Jogadores/bird2.png"),
+               pygame.image.load("./Jogadores/bird3.png"),
+               pygame.image.load("./Jogadores/bird2.png")]
+
+    sprite_animacao_voar = 0
+    tempo_animacao_voar = 0.1
+    frameatual_animacao_voar = -1
+    frametotal_animacao_voar = fps*tempo_animacao_voar
+
+    for i in range(len(imagens)):
+        imagens[i] = pygame.transform.scale(imagens[i], (largura, altura))
+
+    def Animar(self):
+        if self.frameatual_animacao_voar > -1:
+            self.frameatual_animacao_voar = self.frameatual_animacao_voar + 1
+            
+            if self.frameatual_animacao_voar >= self.frametotal_animacao_voar:
+                self.frameatual_animacao_voar = -1
+                self.sprite_animacao_voar = 0
+                
+            elif int(self.frameatual_animacao_voar % (self.frametotal_animacao_voar/len(self.imagens))) == 0:
+                self.sprite_animacao_voar = self.sprite_animacao_voar + 1
 
     def Atualizar(self,tela):
         self.rect = pygame.Rect(self.x,self.y,self.largura,self.altura)
+        self.Animar()
         self.Desenhar(tela)
         self.Cair()
 
     def Desenhar(self,tela):
-        tela.blit(self.imagem,[self.x,self.y]) #Desenha o pássaro
+        tela.blit(self.imagens[self.sprite_animacao_voar],[self.x,self.y]) #Desenha o pássaro
 
     def Cair(self):
         self.velocidade += self.aceleracao
@@ -57,6 +81,9 @@ class Passaro:
         self.velocidade = 0
         self.som_voar.play()
 
+        self.frameatual_animacao_voar = 0
+        self.sprite_animacao_voar = 0
+        
 class Chao:
     x = 0
     y = 510
@@ -68,7 +95,7 @@ class Chao:
 
     def Atualizar(self,tela,passaro):
         self.rect = pygame.Rect(self.x,self.y,self.largura,self.altura)
-        self.Colidir(passaro)
+        #self.Colidir(passaro)
         self.Desenhar(tela)
 
     def Colidir(self,passaro):
@@ -113,7 +140,7 @@ class Cano:
         
         self.Desenhar(tela)
         self.Mover()
-        self.Colidir(passaro)
+        #self.Colidir(passaro)
 
     def Colidir(self,passaro):
         global loop, pontuacao
